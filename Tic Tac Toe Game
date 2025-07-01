@@ -1,0 +1,127 @@
+# TIC TAC TOE GAME
+
+# Função para exibir o tabuleiro
+def display_board(board):
+    print('\n')
+    print('   |   |')
+    print(' ' + board[7] + ' | ' + board[8] + ' | ' + board[9])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[4] + ' | ' + board[5] + ' | ' + board[6])
+    print('   |   |')
+    print('-----------')
+    print('   |   |')
+    print(' ' + board[1] + ' | ' + board[2] + ' | ' + board[3])
+    print('   |   |')
+    print('\n')
+
+# Função para escolher a marcação dos jogadores
+def player_input():
+    marker = ''
+    while marker not in ['X', 'O']:
+        marker = input("Jogador 1, escolha X ou O: ").upper()
+    player1 = marker
+    player2 = 'O' if player1 == 'X' else 'X'
+    return (player1, player2)
+
+# Função para colocar a marcação no tabuleiro
+def place_marker(board, marker, position):
+    board[position] = marker
+
+# Função para checar se um jogador venceu
+def win_check(board, mark):
+    return ((board[7] == board[8] == board[9] == mark) or  # topo
+            (board[4] == board[5] == board[6] == mark) or  # meio
+            (board[1] == board[2] == board[3] == mark) or  # baixo
+            (board[7] == board[4] == board[1] == mark) or  # coluna esquerda
+            (board[8] == board[5] == board[2] == mark) or  # coluna meio
+            (board[9] == board[6] == board[3] == mark) or  # coluna direita
+            (board[7] == board[5] == board[3] == mark) or  # diagonal
+            (board[9] == board[5] == board[1] == mark))    # diagonal
+
+# Função para escolher quem começa
+import random
+def choose_first():
+    if random.randint(0,1) == 0:
+        return 'Jogador 1'
+    else:
+        return 'Jogador 2'
+
+# Função para checar se a posição está livre
+def space_check(board, position):
+    return board[position] == ' '
+
+# Função para checar se o tabuleiro está cheio
+def full_board_check(board):
+    for i in range(1,10):
+        if space_check(board, i):
+            return False
+    return True
+
+# Função para receber a próxima posição do jogador
+def player_choice(board):
+    position = 0
+    while position not in range(1,10) or not space_check(board, position):
+        try:
+            position = int(input('Escolha sua próxima posição (1-9): '))
+        except:
+            print("Por favor, digite um número válido.")
+    return position
+
+# Função para perguntar se os jogadores querem jogar novamente
+def replay():
+    return input('Desejam jogar novamente? Digite Sim ou Não: ').lower().startswith('s')
+
+# PROGRAMA PRINCIPAL
+print('Bem-vindo ao Tic Tac Toe!')
+
+while True:
+    # Configuração inicial do jogo
+    the_board = [' '] * 10
+    player1_marker, player2_marker = player_input()
+    turn = choose_first()
+    print(turn + ' começa!')
+
+    play_game = input('Pronto para jogar? Sim ou Não: ').lower().startswith('s')
+
+    game_on = play_game
+
+    while game_on:
+        # Turno do jogador 1
+        if turn == 'Jogador 1':
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player1_marker, position)
+
+            if win_check(the_board, player1_marker):
+                display_board(the_board)
+                print('Parabéns! Jogador 1 venceu!')
+                game_on = False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('Empate!')
+                    break
+                else:
+                    turn = 'Jogador 2'
+        # Turno do jogador 2
+        else:
+            display_board(the_board)
+            position = player_choice(the_board)
+            place_marker(the_board, player2_marker, position)
+
+            if win_check(the_board, player2_marker):
+                display_board(the_board)
+                print('Parabéns! Jogador 2 venceu!')
+                game_on = False
+            else:
+                if full_board_check(the_board):
+                    display_board(the_board)
+                    print('Empate!')
+                    break
+                else:
+                    turn = 'Jogador 1'
+    if not replay():
+        print('Obrigado por jogar!')
+        break
